@@ -22,6 +22,18 @@ class CacheSyncTest {
     }
 
     @Test
+    void reentrant_test_0() {
+        Cache<Integer, String> is = new CacheReentrantLock<>();
+        run(is);
+    }
+
+    @Test
+    void reentrant_test_1() {
+        Cache<Integer, String> is = new CacheReentrantLock<>();
+        run(is);
+    }
+
+    @Test
     void reentrantRW_test_0() {
         Cache<Integer, String> is = new CacheReentrantRWLock<>();
         run(is);

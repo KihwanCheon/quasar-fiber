@@ -62,8 +62,12 @@ compileTestJava {
     }
 }
 
+tasks.processJmhResources() {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 jmh {
-    fork = 3
+    fork = 1
     warmupIterations = 1
-    iterations = 3
+    iterations = 2
 }

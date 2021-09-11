@@ -9,13 +9,19 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @State(Scope.Benchmark)
-@BenchmarkMode(Mode.All)
+@BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class CacheSyncJmh {
 
     @Benchmark
     public void synchronized_test_1() {
         Cache<Integer, String> is = new CacheSynchronized<>();
+        run(is);
+    }
+
+    @Benchmark
+    public void reentrant_test_1() {
+        Cache<Integer, String> is = new CacheReentrantLock<>();
         run(is);
     }
 

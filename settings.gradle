@@ -1,2 +1,4 @@
 rootProject.name = 'quasar-fiber'
 
+include ":core"
+include ":core-jmh"

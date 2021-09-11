@@ -1,73 +1,25 @@
-plugins {
-    id 'java'
-    id "me.champeau.jmh" version "0.6.2"
-}
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
 
-sourceCompatibility = '11'
-targetCompatibility = '11'
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
 
-repositories {
-    mavenCentral()
-}
-
-configurations {
-    quasar
-}
-
-dependencies {
-    quasar 'co.paralleluniverse:quasar-core:0.8.0'
-    compileOnly 'org.apache.ant:ant:1.10.11'
-
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    testCompileOnly 'org.projectlombok:lombok:1.18.20'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-
-    jmhCompileOnly 'org.projectlombok:lombok:1.18.20'
-    jmhAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-
-    implementation 'co.paralleluniverse:quasar-core:0.8.0'
-    implementation 'org.slf4j:slf4j-api:1.7.32'
-    implementation 'ch.qos.logback:logback-classic:1.2.6'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-}
-
-test {
-    useJUnitPlatform()
-}
-
-compileJava.dependsOn processResources
-compileJava {
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    doLast {
-        ant.taskdef(name: 'instrumentation', classname: 'co.paralleluniverse.fibers.instrument.InstrumentationTask', classpath: configurations.quasar.asPath)
-        ant.instrumentation(verbose: 'false', check:'false', debug:'false') {
-            fileset(dir: "${project.buildDir}/classes")
-        }
+    repositories {
+        mavenCentral()
     }
-}
 
-compileTestJava {
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    doLast {
-        ant.taskdef(name: 'instrumentation', classname: 'co.paralleluniverse.fibers.instrument.InstrumentationTask', classpath: configurations.quasar.asPath)
-        ant.instrumentation(verbose: 'false', check:'false', debug:'false') {
-            fileset(dir: "${project.buildDir}/classes")
-        }
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.20'
+        annotationProcessor 'org.projectlombok:lombok:1.18.20'
+        testCompileOnly 'org.projectlombok:lombok:1.18.20'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+        implementation 'org.slf4j:slf4j-api:1.7.32'
+        implementation 'ch.qos.logback:logback-classic:1.2.6'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     }
-}
-
-tasks.processJmhResources() {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-}
-
-jmh {
-    fork = 1
-    warmupIterations = 1
-    iterations = 2
 }

@@ -23,7 +23,11 @@ public class CacheSynchronized<K, V> implements Cache<K, V> {
     @Override
     public Map<K, V> clear() {
         log.trace("clear");
-        return sync(() -> new HashMap<>(container));
+        return sync(() -> {
+            HashMap<K, V> kvHashMap = new HashMap<>(container);
+            container.clear();
+            return kvHashMap;
+        });
     }
 
     @Override

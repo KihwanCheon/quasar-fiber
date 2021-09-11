@@ -40,14 +40,18 @@ public class CacheReentrantRWLock<K, V> implements Cache<K, V> {
     @Override
     public Map<K, V> clear() {
         log.trace("clear");
-        return writeJob(() -> new HashMap<>(container));
+        return writeJob(() -> {
+            HashMap<K, V> kvHashMap = new HashMap<>(container);
+            container.clear();
+            return kvHashMap;
+        });
     }
 
     @Override
     public void put(K k, V v) {
         log.trace("put");
         writeJob(() -> {
-            container.clear();
+            container.put(k, v);
             return true;
         });
     }

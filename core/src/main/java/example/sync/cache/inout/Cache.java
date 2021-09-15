@@ -1,6 +1,7 @@
 package example.sync.cache.inout;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public interface Cache <K, V> {
@@ -15,5 +16,5 @@ public interface Cache <K, V> {
 
     V value(K key);
 
-    Collection<K> keys();
+    List<K> keys();
 }

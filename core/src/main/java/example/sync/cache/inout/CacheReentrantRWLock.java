@@ -69,7 +69,7 @@ public class CacheReentrantRWLock<K, V> implements Cache<K, V> {
     }
 
     @Override
-    public Collection<K> keys() {
+    public List<K> keys() {
         log.trace("keys");
         return readJob(() -> new ArrayList<>(container.keySet()));
     }

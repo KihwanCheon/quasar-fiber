@@ -1,4 +1,4 @@
-package example.sync;
+package example.sync.cache.inout;
 
 import java.util.Collection;
 import java.util.Map;

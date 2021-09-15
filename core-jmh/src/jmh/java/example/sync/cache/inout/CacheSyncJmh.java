@@ -1,5 +1,8 @@
-package example.sync;
+package example.sync.cache.inout;
 
+import example.sync.cache.inout.Cache;
+import example.sync.cache.inout.CacheReentrantRWLock;
+import example.sync.cache.inout.CacheSynchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.openjdk.jmh.annotations.*;
 import java.util.ArrayList;

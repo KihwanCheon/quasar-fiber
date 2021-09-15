@@ -1,9 +1,11 @@
 plugins {
+    id 'java'
     id "me.champeau.jmh" version "0.6.2"
 }
 
 group 'org.example'
 version '1.0-SNAPSHOT'
+
 
 dependencies {
     implementation project(":core")
@@ -12,8 +14,12 @@ dependencies {
     jmhAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 }
 
+tasks.processJmhResources() {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 jmh {
-    fork = 3
-    warmupIterations = 3
-    iterations = 20
+    fork = 1
+    warmupIterations = 1
+    iterations = 2
 }

@@ -1,4 +1,4 @@
-package example.sync;
+package example.sync.cache.reloadable;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -7,10 +7,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Slf4j
-public class CacheReentrantLock<K, V> implements Cache<K, V> {
+public class CacheReloadableReentrantLock<K, V> implements CacheReloadable<K, V> {
 
     Map<K, V> container = new HashMap<>();
     ReentrantLock lock = new ReentrantLock();
@@ -32,28 +33,13 @@ public class CacheReentrantLock<K, V> implements Cache<K, V> {
     }
 
     @Override
-    public Map<K, V> clear() {
-        log.trace("clear");
-        return lockJob(() -> {
-            HashMap<K, V> kvHashMap = new HashMap<>(container);
-            container.clear();
-            return kvHashMap;
-        });
-    }
-
-    @Override
-    public void put(K k, V v) {
-        log.trace("put");
+    public void load(Consumer<Map<K, V>> gen) {
+        log.trace("load");
         lockJob(() -> {
-            container.put(k, v);
+            container.clear();
+            gen.accept(container);
             return true;
         });
-    }
-
-    @Override
-    public V remove(K k) {
-        log.trace("remove");
-        return lockJob(() -> container.remove(k));
     }
 
     @Override

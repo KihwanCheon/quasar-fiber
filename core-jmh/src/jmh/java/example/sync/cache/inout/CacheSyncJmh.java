@@ -1,24 +1,30 @@
 package example.sync.cache.inout;
 
-import example.sync.cache.inout.Cache;
-import example.sync.cache.inout.CacheReentrantRWLock;
-import example.sync.cache.inout.CacheSynchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.openjdk.jmh.annotations.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static example.sync.cache.Consts.*;
+
 @Slf4j
 @State(Scope.Benchmark)
-@BenchmarkMode(Mode.All)
+@BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 public class CacheSyncJmh {
 
     @Benchmark
     public void synchronized_test_1() {
         Cache<Integer, String> is = new CacheSynchronized<>();
+        run(is);
+    }
+
+    @Benchmark
+    public void reentrant_test_1() {
+        Cache<Integer, String> is = new CacheReentrantLock<>();
         run(is);
     }
 
@@ -33,19 +39,28 @@ public class CacheSyncJmh {
         Task(Cache<Integer, String> cache) {
             this.cache = cache;
         }
+        Random rnd = new Random();
 
         @Override
         public void run() {
             log.info("start~ {}", Thread.currentThread());
-            for (int i = 0; i < 10000; ++i) {
+            for (int i = 0; i < loop_count; ++i) {
                 int before = cache.keys().size();
-                if (i % 1000 == 0) {
+
+                int r = rnd.nextInt(loop_count);
+                if (r < refresh_ratio) {
                     Map<Integer, String> cleared = cache.clear();
                     log.debug("before:{}, cleared:{}, after:{}", before, cleared.size(), cache.size());
-                } else if (i % 10 == 0) {
-                    cache.put(i, Integer.toString(i));
-                    int after = cache.size();
-                    log.debug("before:{}, after:{}", before, after);
+                } else {
+                    if (rnd.nextBoolean()) {
+                        cache.put(i, Integer.toString(i));
+                    } else {
+                        List<Integer> keys = cache.keys();
+                        if (keys.size() > 0) {
+                            String value = cache.value(keys.get(rnd.nextInt(keys.size())));
+                            log.debug("before:{}, value:{}", before, value);
+                        }
+                    }
                 }
             }
             log.info("end~ {}", Thread.currentThread());
@@ -53,8 +68,9 @@ public class CacheSyncJmh {
     }
 
     private void run(Cache<Integer, String> is) {
-        List<Thread> list = new ArrayList<>(10);
-        for (int i = 0; i < 10; ++i) {
+
+        List<Thread> list = new ArrayList<>(thread_cnt);
+        for (int i = 0; i < thread_cnt; ++i) {
             list.add(new Thread(new Task(is)));
         }
 

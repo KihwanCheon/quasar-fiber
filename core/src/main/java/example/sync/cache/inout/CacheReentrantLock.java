@@ -3,27 +3,35 @@ package example.sync.cache.inout;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 @Slf4j
-public class CacheSynchronized<K, V> implements Cache<K, V> {
+public class CacheReentrantLock<K, V> implements Cache<K, V> {
 
     Map<K, V> container = new HashMap<>();
+    ReentrantLock lock = new ReentrantLock();
 
-    synchronized <T> T sync(Supplier<T> supplier) {
-        return supplier.get();
+
+
+    <T> T lockJob(Supplier<T> supplier) {
+        lock.lock();
+        try {
+            return supplier.get();
+        } finally {
+            lock.unlock();
+        }
     }
-
 
     @Override
     public int size() {
-        return sync(() -> container.size());
+        return lockJob(() -> container.size());
     }
 
     @Override
     public Map<K, V> clear() {
         log.trace("clear");
-        return sync(() -> {
+        return lockJob(() -> {
             HashMap<K, V> kvHashMap = new HashMap<>(container);
             container.clear();
             return kvHashMap;
@@ -33,7 +41,7 @@ public class CacheSynchronized<K, V> implements Cache<K, V> {
     @Override
     public void put(K k, V v) {
         log.trace("put");
-        sync(() -> {
+        lockJob(() -> {
             container.put(k, v);
             return true;
         });
@@ -42,18 +50,18 @@ public class CacheSynchronized<K, V> implements Cache<K, V> {
     @Override
     public V remove(K k) {
         log.trace("remove");
-        return sync(() -> container.remove(k));
+        return lockJob(() -> container.remove(k));
     }
 
     @Override
     public V value(K key) {
         log.trace("value: {}", key);
-        return sync(() -> container.get(key));
+        return lockJob(() -> container.get(key));
     }
 
     @Override
     public List<K> keys() {
         log.trace("keys");
-        return sync(() -> new ArrayList<>(container.keySet()));
+        return lockJob(() -> new ArrayList<>(container.keySet()));
     }
 }

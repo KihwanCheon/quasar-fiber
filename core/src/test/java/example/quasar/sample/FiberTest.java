@@ -21,6 +21,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * <a href="https://docs.paralleluniverse.co/quasar/#examples">quasar site</a>
+ * <a href="https://github.com/puniverse/quasar/blob/master/quasar-core/src/test/java/co/paralleluniverse/fibers/FiberTest.java">github</a>
+ */
 @Slf4j
 public class FiberTest {
 

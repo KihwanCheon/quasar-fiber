@@ -30,6 +30,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.11'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testImplementation 'org.assertj:assertj-core:3.23.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
 }
 
@@ -44,7 +45,7 @@ compileJava {
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     doLast {
         ant.taskdef(name: 'instrumentation', classname: 'co.paralleluniverse.fibers.instrument.InstrumentationTask', classpath: configurations.quasar.asPath)
-        ant.instrumentation(verbose: 'true', check:'true', debug:'true') {
+        ant.instrumentation(verbose: 'false', check:'false', debug:'false') {
             fileset(dir: "${project.buildDir}/classes/java/main")
         }
     }
@@ -54,7 +55,7 @@ compileTestJava {
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     doLast {
         ant.taskdef(name: 'instrumentation', classname: 'co.paralleluniverse.fibers.instrument.InstrumentationTask', classpath: configurations.quasar.asPath)
-        ant.instrumentation(verbose: 'true', check:'true', debug:'true') {
+        ant.instrumentation(verbose: 'false', check:'false', debug:'false') {
             fileset(dir: "${project.buildDir}/classes/java/test")
         }
     }

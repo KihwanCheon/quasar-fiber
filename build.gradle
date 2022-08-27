@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    quasar
+}
+
+dependencies {
+    quasar 'co.paralleluniverse:quasar-core:0.8.0'
+    implementation 'co.paralleluniverse:quasar-core:0.8.0'
+    compileOnly 'org.apache.ant:ant:1.10.11'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileJava.dependsOn processResources
+compileJava {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    doLast {
+        ant.taskdef(name: 'instrumentation', classname: 'co.paralleluniverse.fibers.instrument.InstrumentationTask', classpath: configurations.quasar.asPath)
+        ant.instrumentation(verbose: 'false', check:'false', debug:'false') {
+            fileset(dir: "${project.buildDir}/classes")
+        }
+    }
+}

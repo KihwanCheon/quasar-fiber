@@ -8,8 +8,8 @@ version '1.0-SNAPSHOT'
 dependencies {
     implementation project(":core")
 
-    jmhCompileOnly 'org.projectlombok:lombok:1.18.20'
-    jmhAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+    jmhCompileOnly 'org.projectlombok:lombok:1.18.24'
+    jmhAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
 tasks.getByName('jmhJar') {
